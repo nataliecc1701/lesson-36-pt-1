@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const { SECRET_KEY } = require("../config");
 const ExpressError = require("../expressError")
-const User = require("../models/user")
+const User = require("../models/user");
+const { ensureCorrectUser } = require("../middleware/auth");
 
 const router = new express.Router();
 
@@ -50,7 +51,7 @@ router.get("/:username", async function(req, res, next) {
  *
  **/
 
-router.get("/:username/to", async function(req, res, next) {
+router.get("/:username/to", ensureCorrectUser, async function(req, res, next) {
     try {
         const results = await User.messagesTo(req.params.username);
         return res.json({messages : results});
@@ -69,7 +70,7 @@ router.get("/:username/to", async function(req, res, next) {
  *
  **/
 
-router.get("/:username/from", async function(req, res, next) {
+router.get("/:username/from", ensureCorrectUser, async function(req, res, next) {
     try {
         const results = await User.messagesFrom(req.params.username);
         return res.json({messages : results});
